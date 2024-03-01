@@ -13,15 +13,16 @@ public class IA : MonoBehaviour
    
     }
 
+    [SerializeField] private Transform[] patrolPoints;
+    [SerializeField] private float detectionRange = 9;
+    [SerializeField] private float attackRange = 5;
+
     State currentState;
     
     private NavMeshAgent agent;
     private Transform player;
     
-    [SerializeField] private Transform[] patrolPoints;
-    [SerializeField] private float detectionRange = 15;
-    [SerializeField] private float attackRange = 5;
-
+   
    
     void Awake()
     {
@@ -32,7 +33,9 @@ public class IA : MonoBehaviour
     
     void Start()
     {
+        SetRandomPoint();
         currentState = State.Patrolling;
+        
     }
 
     // Update is called once per frame
@@ -55,8 +58,8 @@ public class IA : MonoBehaviour
 
         }
     }
-    
-     void SetRandomPoint()
+
+    void SetRandomPoint()
     {
         agent.destination = patrolPoints[Random.Range(0,patrolPoints.Length - 1)].position;
     }
@@ -73,6 +76,7 @@ public class IA : MonoBehaviour
         }
     }
 
+
      void Patrol()
     {
         if(IsInRange(detectionRange) == true)
@@ -86,18 +90,44 @@ public class IA : MonoBehaviour
         }
     }
 
+    void Chase()
+    {
+         if(IsInRange(detectionRange) == false)
+        {
+            SetRandomPoint();
+            currentState = State.Chasing;
+        }
+
+        if(IsInRange(attackRange) == true)
+        {
+            currentState = State.Attacking;
+        }
+        agent.destination = player.position;
+    }
+
      void Attack()
     {
-        
+        Debug.Log("Atacar");
+        currentState = State.Chasing;
     }
 
-     void Chase()
+
+
+     void OnDrawGizmos()
     {
-        
+        Gizmos.color = Color.red;
+
+        foreach(Transform point in patrolPoints)
+        {
+            Gizmos.DrawWireSphere(point.position, 0.5f);
+        }
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
+
     }
-
-
-
-
 
 }
