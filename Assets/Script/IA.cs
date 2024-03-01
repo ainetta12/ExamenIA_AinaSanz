@@ -61,7 +61,7 @@ public class IA : MonoBehaviour
 
     void SetRandomPoint()
     {
-        agent.destination = patrolPoints[Random.Range(0,patrolPoints.Length - 1)].position;
+        agent.destination = patrolPoints[Random.Range(0,patrolPoints.Length)].position;
     }
 
     bool IsInRange(float range)
